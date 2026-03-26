@@ -1,4 +1,4 @@
-# Web Crawler Profissional
+# Web Crawler 
 
 Crawler em Python para reconhecimento web com port scanning, enumeração de subdomínios, descoberta de links, brute-force de diretórios e geração de relatórios.
 
