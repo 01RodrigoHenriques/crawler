@@ -233,7 +233,7 @@ sudo apt upgrade
 sudo apt install python3 python3-pip python3-venv
 
 # Clonar e setup
-git clone https://seu-repo.git crawler
+git clone https://github.com/01RodrigoHenriques/crawler.git
 cd crawler
 python3 -m venv venv
 source venv/bin/activate
