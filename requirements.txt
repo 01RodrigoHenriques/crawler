@@ -1,4 +1,19 @@
-requests
-beautifulsoup4
-urllib3
-pyinstaller
+# Web Crawler Profissional - Dependências
+
+# HTTP
+requests>=2.31.0
+urllib3>=2.1.0
+
+# Parsing
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# DNS (opcional, para melhoria de performance)
+dnspython>=2.4.0
+
+# CLI & Utilities
+tqdm>=4.66.0  # Progress bars
+
+# Testing & Building  
+pytest>=7.4.0
+pyinstaller>=6.0.0
