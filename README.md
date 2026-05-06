@@ -1,6 +1,8 @@
-# Web Crawler 
+# Web Crawler
 
 Crawler em Python para reconhecimento web com port scanning, enumeração de subdomínios, descoberta de links, brute-force de diretórios e geração de relatórios.
+
+O projeto está preparado para manutenção de equipa: packaging moderno, CI, linting, type checking, testes unitários e integração local.
 
 ## O que faz
 
@@ -13,27 +15,34 @@ Crawler em Python para reconhecimento web com port scanning, enumeração de sub
 
 ## Requisitos
 
-- Python 3.8+
-- Dependências em `requirements.txt`
+- Python 3.10+
+- Instalação via `pyproject.toml`
 
 Instalação detalhada: [INSTALLATION.md](INSTALLATION.md)
 
 ## Quick Start
 
 ```bash
-pip install -r requirements.txt
-python main.py https://exemplo.com
+python -m pip install --upgrade pip
+pip install -e ".[dev]"
+python -m main https://exemplo.com
+```
+
+Também podes usar o entry point instalado:
+
+```bash
+crawler https://exemplo.com
 ```
 
 ## Uso
 
 ```bash
-python main.py https://exemplo.com
-python main.py https://exemplo.com --threads 20 --timeout 10
-python main.py https://exemplo.com --skip-subdomain --skip-crawl
-python main.py https://exemplo.com --output results_custom/
-python main.py https://self-signed.local --no-ssl-verify
-python main.py --help
+python -m main https://exemplo.com
+python -m main https://exemplo.com --threads 20 --timeout 10
+python -m main https://exemplo.com --skip-subdomain --skip-crawl
+python -m main https://exemplo.com --output results_custom/
+python -m main https://self-signed.local --no-ssl-verify
+python -m main --help
 ```
 
 ## Opções principais
@@ -69,8 +78,13 @@ crawler/
 |-- subdomain_enum.py
 |-- tech_detector.py
 |-- reporter.py
-|-- test_crawler.py
+|-- tests/
+|   |-- unit/
+|   `-- integration/
 |-- wordlists/
+|-- pyproject.toml
+|-- CONTRIBUTING.md
+|-- ARCHITECTURE.md
 |-- INSTALLATION.md
 |-- TROUBLESHOOTING.md
 `-- results/
@@ -78,16 +92,20 @@ crawler/
 
 ## Estado atual
 
-- CLI alinhado com o comportamento real de SSL e output
-- Sessão HTTP com controlo de concorrência melhorado
+- CLI empacotada com entry point `crawler`
+- Sessão HTTP partilhada com retry e rate limiting
 - HTML report com escape de conteúdo antes de renderizar
 - Fingerprinting e banner grabbing corrigidos
-- Testes locais atualizados
+- Testes unitários e de integração local
+- CI a validar lint, formatação e type checking
 
 ## Testes
 
 ```bash
-python -m unittest -v
+pytest -q
+python -m ruff format --check .
+python -m ruff check .
+python -m mypy .
 ```
 
 ## Segurança
@@ -98,3 +116,23 @@ Usa este projeto apenas em ambientes teus ou com autorização explícita. Não 
 
 - Instalação: [INSTALLATION.md](INSTALLATION.md)
 - Troubleshooting: [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
+- Arquitetura: [ARCHITECTURE.md](ARCHITECTURE.md)
+- Contribuição: [CONTRIBUTING.md](CONTRIBUTING.md)
+
+## Qualidade
+
+- Lint: `ruff check .`
+- Formatação: `ruff format .`
+- Type checking: `mypy .`
+- Testes: `pytest -q`
+
+## Garantia de execução limpa
+
+```bash
+python -m pip install --upgrade pip
+pip install -e ".[dev]"
+python -m main --help
+python -m ruff check .
+python -m mypy .
+pytest -q --cov=. --cov-report=term-missing --cov-fail-under=50
+```

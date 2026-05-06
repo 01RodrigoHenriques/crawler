@@ -1,6 +1,7 @@
 """
 Port scanning e directory brute-force
 """
+
 import socket
 import threading
 import uuid
@@ -17,7 +18,7 @@ class PortScanner:
 
     def __init__(self, host: str):
         self.host = host
-        self.open_ports = []
+        self.open_ports: list[Dict[str, object]] = []
         self.lock = threading.Lock()
 
     def _scan_port(self, port: int) -> Optional[Dict]:
@@ -91,10 +92,10 @@ class DirectoryScanner:
     def __init__(self, base_url: str):
         self.base_url = base_url.rstrip("/")
         self.session = get_session()
-        self.found_dirs = []
+        self.found_dirs: list[Dict[str, object]] = []
         self.lock = threading.Lock()
-        self.base_404_fingerprint = None
-        self.base_root_fingerprint = None
+        self.base_404_fingerprint: str | None = None
+        self.base_root_fingerprint: str | None = None
 
     def _fingerprint(self, html: str) -> str:
         """Cria fingerprint normalizado do HTML para 404 detection."""

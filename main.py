@@ -3,6 +3,7 @@
 Web Crawler - Reconhecimento e Scanning
 Uso: python main.py [url] [--threads N] [--timeout T] [--no-ssl-verify]
 """
+
 import argparse
 import sys
 from datetime import datetime
@@ -35,9 +36,24 @@ Exemplos:
     )
 
     parser.add_argument("url", nargs="?", default=config.TARGET, help=f"URL alvo (default: {config.TARGET})")
-    parser.add_argument("--threads", type=int, default=config.MAX_WORKERS, help=f"Numero de workers (default: {config.MAX_WORKERS})")
-    parser.add_argument("--timeout", type=int, default=config.TIMEOUT, help=f"Timeout em segundos (default: {config.TIMEOUT})")
-    parser.add_argument("--rate-limit", type=int, default=config.RATE_LIMIT, help=f"Requests/seg (default: {config.RATE_LIMIT})")
+    parser.add_argument(
+        "--threads",
+        type=int,
+        default=config.MAX_WORKERS,
+        help=f"Numero de workers (default: {config.MAX_WORKERS})",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=int,
+        default=config.TIMEOUT,
+        help=f"Timeout em segundos (default: {config.TIMEOUT})",
+    )
+    parser.add_argument(
+        "--rate-limit",
+        type=int,
+        default=config.RATE_LIMIT,
+        help=f"Requests/seg (default: {config.RATE_LIMIT})",
+    )
     parser.add_argument("--no-ssl-verify", action="store_true", help="Desabilitar verificacao SSL")
     parser.add_argument("--skip-subdomain", action="store_true", help="Saltar enumeracao de subdominios")
     parser.add_argument("--skip-crawl", action="store_true", help="Saltar crawling de links")

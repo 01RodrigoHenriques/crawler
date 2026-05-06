@@ -35,7 +35,7 @@ Se Python não está instalado:
 
 ```bash
 # Opção A: Clonar com Git
-git clone https://github.com/seu-usuario/crawler.git
+git clone https://github.com/01RodrigoHenriques/crawler.git
 cd crawler
 
 # Opção B: Download direto
@@ -213,7 +213,7 @@ chmod 755 results
 REM 1. Instalar Python 3.11+ de https://www.python.org
 REM 2. Abrir cmd ou PowerShell
 
-cd \Users\seu-usuario\Documents\crawler
+cd \Users\user\Documents\crawler
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt

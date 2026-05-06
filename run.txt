@@ -1,1 +1,0 @@
-python.exe main.py https://exemple.com --threads 5 --timeout 10 --rate-limit 5 --output results/smoked

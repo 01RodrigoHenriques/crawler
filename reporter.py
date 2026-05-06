@@ -1,6 +1,7 @@
 """
 Geracao de relatorios em multiplos formatos (JSON, XML, HTML)
 """
+
 import html
 import json
 import xml.etree.ElementTree as ET
@@ -39,7 +40,7 @@ class ReportGenerator:
             "links": list(set(self.results.get("links", [])))[:100],
         }
 
-    def _ensure_output_dir(self, output_file: Path):
+    def _ensure_output_dir(self, output_file: Path) -> Path:
         output_file = Path(output_file)
         output_file.parent.mkdir(parents=True, exist_ok=True)
         return output_file
@@ -63,12 +64,13 @@ class ReportGenerator:
         body_rows = []
         for row in rows:
             cells = []
-            for value, class_name in zip(row, cell_classes):
+            for value, class_name in zip(row, cell_classes, strict=False):
                 class_attr = f" class='{class_name}'" if class_name else ""
                 cells.append(f"<td{class_attr}>{self._escape(value)}</td>")
             body_rows.append("<tr>" + "".join(cells) + "</tr>")
 
-        return f"<h2>{self._escape(title)}</h2><table><tr>{header_html}</tr>{''.join(body_rows)}</table>"
+        table_rows = "".join(body_rows)
+        return f"<h2>{self._escape(title)}</h2><table><tr>{header_html}</tr>{table_rows}</table>"
 
     def _render_html_tags(self, title: str, values: list[Any]) -> str:
         if not values:
@@ -76,7 +78,7 @@ class ReportGenerator:
         tags = "".join(f"<span class='tag'>{self._escape(value)}</span>" for value in values)
         return f"<h2>{self._escape(title)}</h2>{tags}"
 
-    def to_json(self, output_file: Path = None) -> str:
+    def to_json(self, output_file: Path | None = None) -> str:
         """Gera relatorio em JSON."""
         if output_file is None:
             output_file = config.OUTPUT_JSON
@@ -94,7 +96,7 @@ class ReportGenerator:
             logger.error(f"Erro ao gerar relatorio JSON: {e}")
             return ""
 
-    def to_xml(self, output_file: Path = None) -> str:
+    def to_xml(self, output_file: Path | None = None) -> str:
         """Gera relatorio em XML (estilo Nmap)."""
         if output_file is None:
             output_file = config.OUTPUT_XML
@@ -155,7 +157,7 @@ class ReportGenerator:
             logger.error(f"Erro ao gerar relatorio XML: {e}")
             return ""
 
-    def to_html(self, output_file: Path = None) -> str:
+    def to_html(self, output_file: Path | None = None) -> str:
         """Gera relatorio em HTML."""
         if output_file is None:
             output_file = config.OUTPUT_HTML
@@ -204,9 +206,25 @@ class ReportGenerator:
             padding: 20px;
             min-height: 100vh;
         }}
-        .container {{ max-width: 1200px; margin: 0 auto; background: white; border-radius: 10px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }}
-        h1 {{ color: #667eea; margin-bottom: 10px; border-bottom: 3px solid #667eea; padding-bottom: 10px; }}
-        h2 {{ color: #764ba2; margin-top: 30px; margin-bottom: 15px; }}
+        .container {{
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }}
+        h1 {{
+            color: #667eea;
+            margin-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }}
+        h2 {{
+            color: #764ba2;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }}
         .summary {{
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -220,11 +238,30 @@ class ReportGenerator:
             border-radius: 8px;
             text-align: center;
         }}
-        .summary-card h3 {{ font-size: 14px; opacity: 0.9; margin-bottom: 10px; }}
-        .summary-card .number {{ font-size: 32px; font-weight: bold; }}
-        table {{ width: 100%; border-collapse: collapse; margin-bottom: 20px; }}
-        table th {{ background: #667eea; color: white; padding: 12px; text-align: left; }}
-        table td {{ padding: 10px; border-bottom: 1px solid #eee; }}
+        .summary-card h3 {{
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }}
+        .summary-card .number {{
+            font-size: 32px;
+            font-weight: bold;
+        }}
+        table {{
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }}
+        table th {{
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }}
+        table td {{
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }}
         table tr:hover {{ background: #f5f5f5; }}
         .tag {{
             display: inline-block;
@@ -245,26 +282,26 @@ class ReportGenerator:
         <div class="meta">
             <strong>Target:</strong> {target}<br>
             <strong>Scan Date:</strong> {timestamp}<br>
-            {'<strong>WAF Detected:</strong> ' + waf_detected if waf_detected else ''}
+            {"<strong>WAF Detected:</strong> " + waf_detected if waf_detected else ""}
         </div>
 
         <h2>Summary</h2>
         <div class="summary">
             <div class="summary-card">
                 <h3>Open Ports</h3>
-                <div class="number">{clean_data['summary']['open_ports']}</div>
+                <div class="number">{clean_data["summary"]["open_ports"]}</div>
             </div>
             <div class="summary-card">
                 <h3>Active Subdomains</h3>
-                <div class="number">{clean_data['summary']['subdomains_active']}</div>
+                <div class="number">{clean_data["summary"]["subdomains_active"]}</div>
             </div>
             <div class="summary-card">
                 <h3>Directories Found</h3>
-                <div class="number">{clean_data['summary']['directories_found']}</div>
+                <div class="number">{clean_data["summary"]["directories_found"]}</div>
             </div>
             <div class="summary-card">
                 <h3>Technologies</h3>
-                <div class="number">{clean_data['summary']['technologies_detected']}</div>
+                <div class="number">{clean_data["summary"]["technologies_detected"]}</div>
             </div>
         </div>
 

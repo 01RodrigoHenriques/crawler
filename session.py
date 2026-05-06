@@ -1,6 +1,7 @@
 """
 Sessao HTTP com retry inteligente, rate limiting e proxy support
 """
+
 import random
 import threading
 import time
@@ -31,7 +32,7 @@ class RateLimiter:
             elapsed = now - self.last_request_time
 
             if self.consecutive_429s > 0:
-                delay = min(config.MAX_DELAY, self.min_interval * (2 ** self.consecutive_429s))
+                delay = min(config.MAX_DELAY, self.min_interval * (2**self.consecutive_429s))
             else:
                 delay = self.min_interval
 

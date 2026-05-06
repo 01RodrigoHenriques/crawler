@@ -1,0 +1,82 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "web-crawler"
+version = "0.1.0"
+description = "Web reconnaissance crawler with scanning, crawling, technology detection, and reporting."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "GitHub Copilot" }]
+dependencies = [
+  "requests>=2.31.0",
+  "urllib3>=2.1.0",
+  "beautifulsoup4>=4.12.0",
+  "lxml>=4.9.0",
+  "dnspython>=2.4.0",
+  "tqdm>=4.66.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.4.0",
+  "pytest-cov>=5.0.0",
+  "ruff>=0.5.0",
+  "mypy>=1.10.0",
+  "types-requests>=2.31.0.20240521",
+  "types-urllib3>=1.26.25.14",
+]
+
+[project.scripts]
+crawler = "main:main"
+
+[tool.setuptools]
+py-modules = [
+  "config",
+  "crawler",
+  "logger_config",
+  "main",
+  "reporter",
+  "scanner",
+  "session",
+  "subdomain_enum",
+  "tech_detector",
+]
+
+[tool.setuptools.data-files]
+"wordlists" = [
+  "wordlists/directories.txt",
+  "wordlists/subdomains.txt",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+  "integration: tests that exercise real local HTTP services",
+]
+
+[tool.coverage.report]
+omit = [
+  "tests/*",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 130
+extend-exclude = ["results"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["config", "crawler", "logger_config", "main", "reporter", "scanner", "session", "subdomain_enum", "tech_detector"]
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+check_untyped_defs = true
+no_site_packages = false

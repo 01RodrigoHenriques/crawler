@@ -1,6 +1,7 @@
 """
 Crawler de links com suporte a robots.txt e sitemap
 """
+
 import re
 from typing import List, Set
 from urllib.parse import urljoin, urlparse, urlunparse
@@ -20,10 +21,10 @@ class LinkCrawler:
         parsed = urlparse(base_url)
         self.base_domain = parsed.netloc
         self.site_root = f"{parsed.scheme}://{parsed.netloc}"
-        self.visited = set()
-        self.to_visit = {base_url}
+        self.visited: set[str] = set()
+        self.to_visit: set[str] = {base_url}
         self.session = get_session()
-        self.links_found = set()
+        self.links_found: set[str] = set()
 
     def _normalize_url(self, url: str) -> str:
         """Normaliza URL para evitar variacoes do mesmo link."""
@@ -125,15 +126,16 @@ class LinkCrawler:
                 return []
 
             soup = BeautifulSoup(response.text, "html.parser")
-            links = []
+            links: List[str] = []
 
             for tag in soup.find_all("a", href=True):
-                link = self._normalize_url(urljoin(url, tag["href"]))
+                href = str(tag.get("href", ""))
+                link = self._normalize_url(urljoin(url, href))
                 if self._is_valid_url(link):
                     links.append(link)
 
             for tag in soup.find_all(["script", "link"]):
-                src = tag.get("src") or tag.get("href")
+                src = str(tag.get("src") or tag.get("href") or "")
                 if src:
                     link = self._normalize_url(urljoin(url, src))
                     if self._is_valid_url(link):

@@ -1,18 +1,36 @@
 """
-Configuração centralizada do crawler
+Configuração centralizada do crawler.
 """
+
+import sys
 from dataclasses import dataclass
-from typing import List
 from pathlib import Path
 
 # ─────────────────────────────────────────────
 # PATHS
 # ─────────────────────────────────────────────
-PROJECT_DIR = Path(__file__).parent
-WORDLIST_DIR = PROJECT_DIR / "wordlists"
+PROJECT_DIR = Path(__file__).resolve().parent
+
+
+def _resolve_wordlist_dir() -> Path:
+    """Resolve o diretório de wordlists para desenvolvimento ou instalação."""
+    candidates = [
+        PROJECT_DIR / "wordlists",
+        Path(sys.prefix) / "wordlists",
+        Path(sys.base_prefix) / "wordlists",
+    ]
+
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+
+    return candidates[0]
+
+
+WORDLIST_DIR = _resolve_wordlist_dir()
 WORDLIST_DIRS = WORDLIST_DIR / "directories.txt"
 WORDLIST_SUBDOMAINS = WORDLIST_DIR / "subdomains.txt"
-OUTPUT_DIR = PROJECT_DIR / "results"
+OUTPUT_DIR = (Path.cwd() / "results").resolve()
 OUTPUT_JSON = OUTPUT_DIR / "report.json"
 OUTPUT_XML = OUTPUT_DIR / "report.xml"
 OUTPUT_HTML = OUTPUT_DIR / "report.html"
@@ -24,7 +42,7 @@ def set_output_dir(path_like: Path | str) -> None:
 
     output_dir = Path(path_like).expanduser()
     if not output_dir.is_absolute():
-        output_dir = (PROJECT_DIR / output_dir).resolve()
+        output_dir = (Path.cwd() / output_dir).resolve()
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -38,7 +56,6 @@ def set_output_dir(path_like: Path | str) -> None:
 LOG_FILE = OUTPUT_DIR / "crawler.log"
 
 OUTPUT_DIR.mkdir(exist_ok=True)
-WORDLIST_DIR.mkdir(exist_ok=True)
 
 # ─────────────────────────────────────────────
 # TARGET
@@ -71,9 +88,31 @@ MAX_WORKERS_PORT_SCAN = 20
 # SCANNING
 # ─────────────────────────────────────────────
 COMMON_PORTS = [
-    21, 22, 23, 25, 53, 80, 110, 143, 443,
-    465, 587, 993, 995, 3306, 3389, 5432, 5984,
-    6379, 8000, 8008, 8080, 8443, 8888, 9200, 27017
+    21,
+    22,
+    23,
+    25,
+    53,
+    80,
+    110,
+    143,
+    443,
+    465,
+    587,
+    993,
+    995,
+    3306,
+    3389,
+    5432,
+    5984,
+    6379,
+    8000,
+    8008,
+    8080,
+    8443,
+    8888,
+    9200,
+    27017,
 ]
 
 # Extensions to test for directories
@@ -93,22 +132,25 @@ MAX_PAGES_PER_SCAN = 500
 ROBOTS_TXT_CHECK = True
 SITEMAP_CHECK = True
 
+
 # ─────────────────────────────────────────────
 # AUTHENTICATION (optional)
 # ─────────────────────────────────────────────
 @dataclass
 class AuthConfig:
     """Configuração de autenticação (Basic Auth, Bearer Token, etc)"""
+
     enabled: bool = False
     auth_type: str = "basic"  # 'basic', 'bearer', 'api_key'
     username: str = ""
     password: str = ""
     token: str = ""
-    headers: dict = None
+    headers: dict[str, str] | None = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.headers is None:
             self.headers = {}
+
 
 AUTH_CONFIG = AuthConfig(enabled=False)
 
@@ -116,7 +158,7 @@ AUTH_CONFIG = AuthConfig(enabled=False)
 # PROXY CONFIGURATION
 # ─────────────────────────────────────────────
 PROXY_ENABLED = False
-PROXIES = {
+PROXIES: dict[str, str] = {
     # "http": "http://proxy.example.com:8080",
     # "https": "http://proxy.example.com:8080",
 }
@@ -151,27 +193,27 @@ TECH_SIGNATURES = {
     "WordPress": {
         "html": ["wp-content", "wp-includes", "wp-emoji"],
         "headers": ["x-wp-super-cache"],
-        "files": ["/wp-admin/", "/wp-login.php"]
+        "files": ["/wp-admin/", "/wp-login.php"],
     },
     "Joomla": {
         "html": ["joomla", "/components/com_", "com_content"],
-        "files": ["/administrator/", "/templates/"]
+        "files": ["/administrator/", "/templates/"],
     },
     "Drupal": {
         "html": ["drupal", "/sites/default/", "drupal.js"],
-        "files": ["/sites/", "/modules/"]
+        "files": ["/sites/", "/modules/"],
     },
     "Django": {
         "headers": ["server:"],  # Django often reveals itself in headers
-        "html": ["django", "csrfmiddlewaretoken"]
+        "html": ["django", "csrfmiddlewaretoken"],
     },
     "Flask": {
         "headers": ["werkzeug"],
-        "html": ["flask"]
+        "html": ["flask"],
     },
     "Laravel": {
         "html": ["laravel", "laravel_session"],
-        "files": ["/artisan"]
+        "files": ["/artisan"],
     },
     "Angular": {
         "html": ["angular.js", "ng-", "__angular"],
@@ -191,15 +233,15 @@ TECH_SIGNATURES = {
     "PHP": {
         "html": ["<?php", "phpversion"],
         "files": [".php"],
-        "headers": ["x-powered-by"]
+        "headers": ["x-powered-by"],
     },
     "ASP.NET": {
         "html": ["__viewstate", "__eventtarget"],
-        "headers": ["x-aspnet-version", "x-powered-by"]
+        "headers": ["x-aspnet-version", "x-powered-by"],
     },
     "Node.js": {
         "headers": ["express", "hapi"],
-        "html": ["node.js"]
+        "html": ["node.js"],
     },
 }
 

@@ -1,10 +1,10 @@
 """
 Testes unitarios para o crawler
 """
+
 import unittest
-from pathlib import Path
-from urllib.parse import urlparse
 from unittest.mock import patch
+from urllib.parse import urlparse
 
 import config
 from crawler import LinkCrawler
@@ -135,7 +135,7 @@ class TestReportGenerator(unittest.TestCase):
     """Testes para ReportGenerator."""
 
     def test_html_report_escapes_user_content(self):
-        results = {
+        results: dict[str, object] = {
             "target": '<script>alert("x")</script>',
             "timestamp": "2026-03-25T12:00:00",
             "waf_detected": "<b>Cloudflare</b>",
