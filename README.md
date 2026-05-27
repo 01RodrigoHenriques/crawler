@@ -6,12 +6,14 @@ O projeto está preparado para manutenção de equipa: packaging moderno, CI, li
 
 ## O que faz
 
+
 - Port scanning das portas comuns configuradas em `config.py`
 - Enumeração de subdomínios com validação DNS e verificação HTTP
 - Crawl de links do mesmo domínio com suporte a `robots.txt` e `sitemap.xml`
 - Brute-force de diretórios com fingerprinting para reduzir falsos positivos
 - Detecção básica de tecnologias e WAF
 - Relatórios em JSON, XML e HTML
+
 
 ## Requisitos
 
