@@ -13,6 +13,8 @@ O projeto está preparado para manutenção de equipa: packaging moderno, CI, li
 - Detecção básica de tecnologias e WAF
 - Relatórios em JSON, XML e HTML
 
+
+
 ## Requisitos
 
 - Python 3.10+
